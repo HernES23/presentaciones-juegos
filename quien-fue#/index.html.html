@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>¿Quién fue? — Presentación</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #1a1a2e;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+  }
+  .presentacion { width: 100vw; height: 100vh; position: relative; }
+
+  .slide {
+    position: absolute; inset: 0; padding: 50px 70px;
+    opacity: 0; transform: translateX(40px);
+    transition: opacity .5s ease, transform .5s ease;
+    pointer-events: none;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .slide.activa { opacity: 1; transform: translateX(0); pointer-events: auto; }
+
+  h1 {
+    font-size: 68px; font-weight: 900; letter-spacing: -2px; margin-bottom: 16px;
+    background: linear-gradient(90deg, #ffd93d, #ff6b6b);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  h2 { font-size: 40px; font-weight: 800; margin-bottom: 28px; color: #ffd93d; }
+  p, li { font-size: 19px; line-height: 1.6; color: #e0e0e0; }
+  ul { list-style: none; }
+  li { margin-bottom: 10px; padding-left: 26px; position: relative; }
+  li::before { content: '▸'; position: absolute; left: 0; color: #ff6b6b; font-weight: bold; }
+
+  .dos-columnas {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center;
+  }
+
+  /* ============ CONTENEDOR DE IMAGEN CON RESPALDO ============ */
+  .img-slot {
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+  .img-slot.portada { aspect-ratio: 1; }
+  .img-slot.setup { aspect-ratio: 1; }
+  .img-slot.final { aspect-ratio: 1; }
+  .img-slot.cierre { width: 300px; aspect-ratio: 1; margin: 0 auto 30px; }
+
+  .img-slot .respaldo {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    position: absolute; inset: 0;
+  }
+
+  /* ============ PORTADA ============ */
+  .caja-juego {
+    width: 100%; height: 100%;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 20px 60px rgba(255,107,107,0.4);
+    position: relative;
+  }
+  .caja-juego::before {
+    content: ''; position: absolute; inset: 20px;
+    border: 3px dashed rgba(255,255,255,0.5);
+    border-radius: 12px;
+  }
+  .caja-juego .titulo-caja {
+    font-size: 42px; font-weight: 900; color: #1a1a2e;
+    text-align: center; line-height: 1; letter-spacing: -1px;
+  }
+  .caja-juego .sub-caja {
+    font-size: 14px; color: #1a1a2e; opacity: .7;
+    margin-top: 12px; text-transform: uppercase; letter-spacing: 2px;
+  }
+  .caja-juego .emojis-caja {
+    font-size: 50px; margin-top: 20px; letter-spacing: 8px;
+  }
+
+  .portada-texto .subtitulo { font-size: 22px; color: #b0b0c0; margin-bottom: 28px; line-height: 1.5; }
+  .meta { display: flex; gap: 20px; font-size: 15px; color: #8888a0; text-transform: uppercase; letter-spacing: 2px; }
+  .meta span { padding: 7px 14px; border: 1px solid #333; border-radius: 20px; }
+
+  /* ============ COMPONENTES ============ */
+  .mesa-componentes {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding: 20px;
+    background: rgba(255,255,255,0.03); border-radius: 16px;
+  }
+  .carta-mini {
+    width: 62px; height: 90px; border-radius: 8px; background: #fff; color: #1a1a2e;
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4); border-top: 6px solid #ff6b6b;
+    background-size: cover; background-position: center;
+    transition: transform .3s;
+  }
+  .carta-mini:hover { transform: translateY(-6px) rotate(-3deg); }
+  .carta-mini.azul { border-top-color: #4a9eff; }
+  .carta-mini.verde { border-top-color: #4ade80; }
+  .carta-mini.amarillo { border-top-color: #ffd93d; }
+  .carta-mini.violeta { border-top-color: #a78bfa; }
+  .carta-mini.naranja { border-top-color: #fb923c; }
+
+  .fichas-caca-demo {
+    display: flex; gap: 8px; margin-top: 20px; padding: 12px;
+    background: rgba(107,68,35,0.2); border-radius: 12px; justify-content: center;
+  }
+  .ficha-mini {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #6b4423; border: 2px solid #8b5a2b;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+
+  /* ============ SETUP ============ */
+  .mesa-setup {
+    position: relative; aspect-ratio: 1;
+    background: radial-gradient(circle, #2a2a4a 0%, #16162a 100%);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .jugador-setup {
+    position: absolute; width: 64px; height: 64px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px; color: #1a1a2e;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    flex-direction: column;
+  }
+  .jugador-setup .mano-cartas {
+    position: absolute; font-size: 11px; letter-spacing: -3px;
+    bottom: -14px; color: #fff;
+  }
+  .jugador-setup.j1 { top: 18px; left: 50%; transform: translateX(-50%); background: #ff6b6b; }
+  .jugador-setup.j2 { right: 18px; top: 50%; transform: translateY(-50%); background: #4a9eff; }
+  .jugador-setup.j3 { bottom: 18px; left: 50%; transform: translateX(-50%); background: #4ade80; }
+  .jugador-setup.j4 { left: 18px; top: 50%; transform: translateY(-50%); background: #ffd93d; }
+
+  .centro-setup {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: #6b4423; border: 3px solid #8b5a2b;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 32px; gap: 4px;
+  }
+  .centro-setup .texto-centro {
+    font-size: 10px; color: #fff; opacity: .7; text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* ============ CÓMO SE JUEGA ============ */
+  .escenario-juego {
+    position: relative; aspect-ratio: 1;
+    background: radial-gradient(circle, #2a2a4a 0%, #16162a 100%);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .jugador-escenario {
+    position: absolute; width: 68px; height: 68px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #1a1a2e; font-size: 16px;
+    z-index: 3;
+    transition: all .6s cubic-bezier(.34,1.56,.64,1);
+    flex-direction: column; gap: 2px;
+  }
+  .jugador-escenario.j1 { top: 34px; left: 50%; transform: translateX(-50%); background: #ff6b6b; }
+  .jugador-escenario.j2 { right: 34px; top: 50%; transform: translateY(-50%); background: #4a9eff; }
+  .jugador-escenario.j3 { bottom: 34px; left: 50%; transform: translateX(-50%); background: #4ade80; }
+  .jugador-escenario.j4 { left: 34px; top: 50%; transform: translateY(-50%); background: #ffd93d; }
+
+  .jugador-escenario.destacado {
+    box-shadow: 0 0 0 4px #ffd93d, 0 0 30px rgba(255,217,61,0.8);
+    transform: translateX(-50%) scale(1.15);
+  }
+  .jugador-escenario.j2.destacado { transform: translateY(-50%) scale(1.15); }
+  .jugador-escenario.j3.destacado { transform: translateX(-50%) scale(1.15); }
+  .jugador-escenario.j4.destacado { transform: translateY(-50%) scale(1.15); }
+
+  /* ============ MANO DEL JUGADOR ============ */
+  .mano-jugador {
+    position: absolute;
+    width: 90px; height: 50px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .mano-jugador.j1 { top: 4px; left: 50%; transform: translateX(-50%); }
+  .mano-jugador.j2 { right: 4px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+  .mano-jugador.j3 { bottom: 4px; left: 50%; transform: translateX(-50%); }
+  .mano-jugador.j4 { left: 4px; top: 50%; transform: translateY(-50%) rotate(90deg); }
+
+  .carta-mano {
+    position: absolute;
+    width: 22px; height: 32px;
+    border-radius: 4px;
+    background: #fff;
+    color: #1a1a2e;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    border-top: 3px solid #ff6b6b;
+    transition: all .5s cubic-bezier(.34,1.56,.64,1);
+    background-size: cover; background-position: center;
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  .mano-jugador .carta-mano { left: 50%; }
+  .mano-jugador .carta-mano:nth-child(1) { transform: translateX(-50%) rotate(-15deg) translateY(0); }
+  .mano-jugador .carta-mano:nth-child(2) { transform: translateX(-50%) rotate(-8deg) translateY(-4px); }
+  .mano-jugador .carta-mano:nth-child(3) { transform: translateX(-50%) rotate(-2deg) translateY(-6px); }
+  .mano-jugador .carta-mano:nth-child(4) { transform: translateX(-50%) rotate(4deg) translateY(-6px); }
+  .mano-jugador .carta-mano:nth-child(5) { transform: translateX(-50%) rotate(10deg) translateY(-4px); }
+  .mano-jugador .carta-mano:nth-child(6) { transform: translateX(-50%) rotate(16deg) translateY(0); }
+
+  .mano-jugador.visible .carta-mano { opacity: 1; }
+
+  /* Carta que sale de la mano */
+  .carta-jugada {
+    position: absolute;
+    width: 40px; height: 58px;
+    border-radius: 6px;
+    background: #fff;
+    color: #1a1a2e;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.7);
+    border-top: 4px solid #ff6b6b;
+    opacity: 0;
+    z-index: 20;
+    pointer-events: none;
+    background-size: cover; background-position: center;
+    transition: all 1s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  .centro-escenario {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 90px; height: 90px; border-radius: 12px;
+    background: rgba(255,255,255,0.05); border: 2px dashed #555;
+    display: flex; align-items: center; justify-content: center;
+    color: #666; font-size: 11px; text-align: center;
+    z-index: 1;
+  }
+
+  .pila-centro {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px; height: 80px;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .pila-centro .carta-pila {
+    position: absolute; inset: 0;
+    border-radius: 8px; background: #fff; color: #1a1a2e;
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    border-top: 6px solid #ff6b6b;
+    opacity: 0;
+    transition: opacity .3s;
+    background-size: cover; background-position: center;
+  }
+  .pila-centro .carta-pila.visible { opacity: 1; }
+  .pila-centro .carta-pila:nth-child(1) { transform: rotate(-6deg); }
+  .pila-centro .carta-pila:nth-child(2) { transform: rotate(3deg); }
+  .pila-centro .carta-pila:nth-child(3) { transform: rotate(-2deg); }
+
+  .bocadillo {
+    position: absolute;
+    background: #ffd93d; color: #1a1a2e;
+    padding: 10px 18px; border-radius: 18px;
+    font-weight: 800; font-size: 15px;
+    z-index: 30;
+    transform: scale(0);
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .bocadillo::after {
+    content: ''; position: absolute; bottom: -8px; left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: #ffd93d;
+    border-bottom: 0;
+  }
+  .bocadillo.visible { transform: scale(1); }
+
+  .ficha-animada {
+    position: absolute;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #6b4423; border: 2px solid #8b5a2b;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    opacity: 0; z-index: 25;
+    transform: scale(0) translateY(-30px);
+    transition: all .6s cubic-bezier(.34,1.56,.64,1);
+    pointer-events: none;
+  }
+  .ficha-animada.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  .etiqueta-estado {
+    position: absolute; top: 12px; left: 12px;
+    background: rgba(0,0,0,0.7); color: #ffd93d;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    opacity: 0;
+    transition: opacity .4s;
+    z-index: 40;
+  }
+  .etiqueta-estado.visible { opacity: 1; }
+
+  /* ============ CONTROLES ============ */
+  .controles-animacion { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .btn-paso {
+    padding: 12px 18px; background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+    color: #1a1a2e; border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 800; cursor: pointer;
+    transition: transform .2s, box-shadow .2s; text-align: left;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .btn-paso:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,107,107,0.4); }
+  .btn-paso:disabled { opacity: .3; cursor: not-allowed; }
+  .btn-paso .num {
+    background: #1a1a2e; color: #ffd93d; width: 24px; height: 24px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0;
+  }
+  .btn-reset {
+    padding: 8px 16px; background: transparent; color: #8888a0;
+    border: 1px solid #333; border-radius: 8px; cursor: pointer;
+    font-size: 12px; align-self: flex-start; margin-top: 4px;
+  }
+  .btn-reset:hover { color: #fff; border-color: #666; }
+
+  /* ============ FIN DEL JUEGO ============ */
+  .ficha-grande {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #6b4423; border: 3px solid #8b5a2b;
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+    opacity: .15; transition: opacity .4s;
+  }
+  .ficha-grande.activo { opacity: 1; }
+
+  .imagen-final {
+    aspect-ratio: 1; border-radius: 16px;
+    background: radial-gradient(circle, #2a2a4a 0%, #16162a 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 20px; padding: 30px;
+  }
+  .imagen-final .trio { display: flex; gap: 14px; }
+  .imagen-final .trio .ficha-grande { opacity: 1; }
+  .imagen-final .frase {
+    font-size: 18px; color: #ff6b6b; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+
+  /* ============ CIERRE ============ */
+  .slide-cierre { justify-content: center; align-items: center; text-align: center; }
+  .slide-cierre h1 { font-size: 52px; margin-bottom: 20px; }
+  .slide-cierre p { font-size: 20px; color: #b0b0c0; max-width: 680px; line-height: 1.7; }
+  .cierre-deco {
+    display: flex; gap: 16px; margin-bottom: 30px;
+    font-size: 50px;
+  }
+  .cierre-deco span {
+    display: inline-block;
+    animation: flotar 3s ease-in-out infinite;
+  }
+  .cierre-deco span:nth-child(2) { animation-delay: .5s; }
+  .cierre-deco span:nth-child(3) { animation-delay: 1s; }
+  @keyframes flotar {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(6deg); }
+  }
+
+  /* ============ NAV ============ */
+  .nav {
+    position: fixed; bottom: 26px; right: 26px;
+    display: flex; gap: 10px; z-index: 100;
+  }
+  .nav button {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: #fff; font-size: 18px; cursor: pointer;
+    transition: background .2s; backdrop-filter: blur(10px);
+  }
+  .nav button:hover { background: rgba(255,255,255,0.2); }
+  .nav button:disabled { opacity: .3; cursor: not-allowed; }
+  .barra-progreso {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+    transition: width .4s ease; z-index: 100;
+  }
+  .contador {
+    position: fixed; top: 16px; right: 26px;
+    font-size: 13px; color: #666; letter-spacing: 2px; z-index: 100;
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-progreso" id="barra"></div>
+<div class="contador" id="contador">1 / 7</div>
+
+<div class="presentacion">
+
+  <!-- SLIDE 1: PORTADA -->
+  <section class="slide activa" data-slide="0">
+    <div class="dos-columnas">
+      <div class="portada-texto">
+        <h1>¿QUIÉN FUE?</h1>
+        <p class="subtitulo">Una mascota se hizo en el salón...<br>y todos quieren limpiar su reputación.</p>
+        <div class="meta">
+          <span>3-6 jugadores</span>
+          <span>6+ años</span>
+          <span>15 min</span>
+        </div>
+      </div>
+      <div class="img-slot portada" data-img="img/portada.jpg">
+        <div class="respaldo">
+          <div class="caja-juego">
+            <div class="titulo-caja">¿QUIÉN<br>FUE?</div>
+            <div class="sub-caja">Fractal Juegos</div>
+            <div class="emojis-caja">🐱 🐢 🦜</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: COMPONENTES -->
+  <section class="slide" data-slide="1">
+    <h2>Componentes</h2>
+    <div class="dos-columnas">
+      <div>
+        <div class="mesa-componentes" id="mesaComponentes"></div>
+        <div class="fichas-caca-demo">
+          <div class="ficha-mini">💩</div>
+          <div class="ficha-mini">💩</div>
+          <div class="ficha-mini">💩</div>
+          <div class="ficha-mini">💩</div>
+          <div class="ficha-mini">💩</div>
+        </div>
+      </div>
+      <div>
+        <ul>
+          <li>36 cartas (6 mascotas × 6 colores)</li>
+          <li>13 fichas de caca</li>
+          <li>1 reglamento</li>
+        </ul>
+        <p style="margin-top:20px;color:#b0b0c0;">
+          Cada jugador recibe las <strong>mismas 6 mascotas</strong>, pero de un color distinto.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: SETUP -->
+  <section class="slide" data-slide="2">
+    <h2>Setup</h2>
+    <div class="dos-columnas">
+      <div class="img-slot setup" data-img="img/setup.jpg">
+        <div class="respaldo">
+          <div class="mesa-setup">
+            <div class="jugador-setup j1">J1<span class="mano-cartas">🃏🃏🃏🃏🃏🃏</span></div>
+            <div class="jugador-setup j2">J2<span class="mano-cartas">🃏🃏🃏🃏🃏🃏</span></div>
+            <div class="jugador-setup j3">J3<span class="mano-cartas">🃏🃏🃏🃏🃏🃏</span></div>
+            <div class="jugador-setup j4">J4<span class="mano-cartas">🃏🃏🃏🃏🃏🃏</span></div>
+            <div class="centro-setup">💩<span class="texto-centro">fichas</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <ul>
+          <li>Separa las cartas por color.</li>
+          <li>Reparte un set de 6 mascotas a cada jugador.</li>
+          <li>Deja las fichas de caca al centro de la mesa.</li>
+          <li>El jugador más joven empieza.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: CÓMO SE JUEGA -->
+  <section class="slide" data-slide="3">
+    <h2>Cómo se juega</h2>
+    <div class="dos-columnas">
+      <div class="escenario-juego" id="escenario">
+        <div class="etiqueta-estado" id="etiquetaEstado">Preparados</div>
+
+        <div class="jugador-escenario j1" id="j1">J1</div>
+        <div class="jugador-escenario j2" id="j2">J2</div>
+        <div class="jugador-escenario j3" id="j3">J3</div>
+        <div class="jugador-escenario j4" id="j4">J4</div>
+
+        <div class="mano-jugador j1" id="manoJ1">
+          <div class="carta-mano" data-animal="gato">🐱</div>
+          <div class="carta-mano" data-animal="tortuga">🐢</div>
+          <div class="carta-mano" data-animal="loro">🦜</div>
+          <div class="carta-mano" data-animal="conejo">🐰</div>
+          <div class="carta-mano" data-animal="hamster">🐹</div>
+          <div class="carta-mano" data-animal="pez">🐟</div>
+        </div>
+        <div class="mano-jugador j2" id="manoJ2">
+          <div class="carta-mano" data-animal="gato">🐱</div>
+          <div class="carta-mano" data-animal="tortuga">🐢</div>
+          <div class="carta-mano" data-animal="loro">🦜</div>
+          <div class="carta-mano" data-animal="conejo">🐰</div>
+          <div class="carta-mano" data-animal="hamster">🐹</div>
+          <div class="carta-mano" data-animal="pez">🐟</div>
+        </div>
+        <div class="mano-jugador j3" id="manoJ3">
+          <div class="carta-mano" data-animal="gato">🐱</div>
+          <div class="carta-mano" data-animal="tortuga">🐢</div>
+          <div class="carta-mano" data-animal="loro">🦜</div>
+          <div class="carta-mano" data-animal="conejo">🐰</div>
+          <div class="carta-mano" data-animal="hamster">🐹</div>
+          <div class="carta-mano" data-animal="pez">🐟</div>
+        </div>
+        <div class="mano-jugador j4" id="manoJ4">
+          <div class="carta-mano" data-animal="gato">🐱</div>
+          <div class="carta-mano" data-animal="tortuga">🐢</div>
+          <div class="carta-mano" data-animal="loro">🦜</div>
+          <div class="carta-mano" data-animal="conejo">🐰</div>
+          <div class="carta-mano" data-animal="hamster">🐹</div>
+          <div class="carta-mano" data-animal="pez">🐟</div>
+        </div>
+
+        <div class="centro-escenario">centro<br>de mesa</div>
+
+        <div class="pila-centro">
+          <div class="carta-pila" id="cartaPila1" data-animal="gato">🐱</div>
+          <div class="carta-pila" id="cartaPila2" data-animal="loro">🦜</div>
+          <div class="carta-pila" id="cartaPila3" data-animal="tortuga">🐢</div>
+        </div>
+
+        <div class="carta-jugada" id="cartaJugada">🐱</div>
+
+        <div class="bocadillo" id="bocadillo1">¡Fue el gato! 🐱</div>
+        <div class="bocadillo" id="bocadillo2">¡Fue el loro! 🦜</div>
+        <div class="bocadillo" id="bocadillo3">¡Fue la tortuga! 🐢</div>
+
+        <div class="ficha-animada" id="fichaAnimada1">💩</div>
+      </div>
+
+      <div>
+        <ul style="margin-bottom:14px;">
+          <li>Acusa a un animal en voz alta.</li>
+          <li>El más rápido en tirar esa carta la pone al centro.</li>
+          <li>Ese jugador acusa a otro animal.</li>
+          <li>Si nadie la tiene o alguien duda, recibe ficha de caca.</li>
+        </ul>
+
+        <div class="controles-animacion">
+          <button class="btn-paso" id="paso1"><span class="num">1</span> J1 acusa: «¡Fue el gato!»</button>
+          <button class="btn-paso" id="paso2" disabled><span class="num">2</span> J2 saca su gato de la mano y lo juega</button>
+          <button class="btn-paso" id="paso3" disabled><span class="num">3</span> J2 acusa al loro</button>
+          <button class="btn-paso" id="paso4" disabled><span class="num">4</span> J3 saca su loro y lo juega</button>
+          <button class="btn-paso" id="paso5" disabled><span class="num">5</span> J3 acusa a la tortuga</button>
+          <button class="btn-paso" id="paso6" disabled><span class="num">6</span> ¡Nadie tiene tortuga! J3 recibe 💩</button>
+          <button class="btn-reset" id="reset">↺ Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: FIN DEL JUEGO -->
+  <section class="slide" data-slide="4">
+    <h2>Final del juego</h2>
+    <div class="dos-columnas">
+      <div class="img-slot final" data-img="img/final.jpg">
+        <div class="respaldo">
+          <div class="imagen-final">
+            <div class="trio">
+              <div class="ficha-grande activo">💩</div>
+              <div class="ficha-grande activo">💩</div>
+              <div class="ficha-grande activo">💩</div>
+            </div>
+            <div class="frase">¡Alguien perdió!</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:20px;margin-bottom:14px;">El juego termina cuando alguien acumula 3 fichas:</p>
+        <ul>
+          <li>Ese jugador <strong>pierde</strong>.</li>
+          <li>Gana quien tenga <strong>menos fichas</strong>.</li>
+          <li>Partidas cortas: varias rondas seguidas.</li>
+          <li>Ideal para cerrar una noche de juegos.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: COMENTARIOS -->
+  <section class="slide" data-slide="5">
+    <h2>Para disfrutarlo más</h2>
+    <div class="dos-columnas">
+      <ul>
+        <li>Ideal para familias con niños de 6+ años.</li>
+        <li>Excelente en grupos de 4-6 personas.</li>
+        <li>Juega varias rondas: cada partida dura 15 min.</li>
+      </ul>
+      <ul>
+        <li>Para adultos: añade reglas como no repetir animales.</li>
+        <li>Modo silencio: solo gestos, mucho más caótico.</li>
+        <li>Recomendado al Spiel des Jahres 2019 (infantil).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: CIERRE -->
+  <section class="slide slide-cierre" data-slide="6">
+    <div class="img-slot cierre" data-img="img/cierre.jpg">
+      <div class="respaldo">
+        <div class="cierre-deco">
+          <span>🐱</span>
+          <span>💩</span>
+          <span>🦜</span>
+        </div>
+      </div>
+    </div>
+    <h1>«No fue mi gato...»</h1>
+    <p>Pero alguien tiene que limpiar.<br><br>Rápido, simple, y siempre termina en risas.</p>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" disabled>←</button>
+  <button id="next">→</button>
+</div>
+
+<script>
+  /* ============================================================
+     SISTEMA AUTOMÁTICO DE IMÁGENES
+     ============================================================ */
+  const MAPA_ANIMALES = {
+    gato:    { emoji: '🐱', archivo: 'img/cartas/gato.png' },
+    tortuga: { emoji: '🐢', archivo: 'img/cartas/tortuga.png' },
+    loro:    { emoji: '🦜', archivo: 'img/cartas/loro.png' },
+    conejo:  { emoji: '🐰', archivo: 'img/cartas/conejo.png' },
+    hamster: { emoji: '🐹', archivo: 'img/cartas/hamster.png' },
+    pez:     { emoji: '🐟', archivo: 'img/cartas/pez.png' },
+  };
+
+  const COLORES = ['', 'azul', 'verde', 'amarillo', 'violeta', 'naranja'];
+
+  function imagenExiste(url) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = url;
+    });
+  }
+
+  const imagenesDisponibles = {};
+  async function precargarImagenesAnimales() {
+    for (const [clave, datos] of Object.entries(MAPA_ANIMALES)) {
+      imagenesDisponibles[clave] = await imagenExiste(datos.archivo);
+    }
+  }
+
+  function aplicarImagenAnimal(el, animal) {
+    if (imagenesDisponibles[animal]) {
+      el.style.background = `#fff url(${MAPA_ANIMALES[animal].archivo}) center/cover`;
+      el.textContent = '';
+      el.style.borderTopColor = 'transparent';
+    } else {
+      el.textContent = MAPA_ANIMALES[animal].emoji;
+    }
+  }
+
+  function generarMesaComponentes() {
+    const mesa = document.getElementById('mesaComponentes');
+    const animales = Object.keys(MAPA_ANIMALES);
+    let html = '';
+    for (let fila = 0; fila < 2; fila++) {
+      animales.forEach((animal, i) => {
+        const colorClase = COLORES[(i + fila * 2) % COLORES.length];
+        html += `<div class="carta-mini ${colorClase}" data-animal="${animal}">${MAPA_ANIMALES[animal].emoji}</div>`;
+      });
+    }
+    mesa.innerHTML = html;
+    mesa.querySelectorAll('.carta-mini').forEach(el => {
+      aplicarImagenAnimal(el, el.dataset.animal);
+    });
+  }
+
+  async function cargarImgSlot() {
+    const slots = document.querySelectorAll('.img-slot');
+    for (const slot of slots) {
+      const url = slot.dataset.img;
+      const existe = await imagenExiste(url);
+      if (existe) {
+        slot.style.backgroundImage = `url(${url})`;
+        slot.querySelector('.respaldo').style.display = 'none';
+      }
+    }
+  }
+
+  function aplicarImagenesEscenario() {
+    document.querySelectorAll('.carta-mano').forEach(el => {
+      const animal = el.dataset.animal;
+      if (animal) aplicarImagenAnimal(el, animal);
+    });
+    document.querySelectorAll('.carta-pila').forEach(el => {
+      const animal = el.dataset.animal;
+      if (animal) aplicarImagenAnimal(el, animal);
+    });
+  }
+
+  (async () => {
+    await precargarImagenesAnimales();
+    generarMesaComponentes();
+    aplicarImagenesEscenario();
+    await cargarImgSlot();
+  })();
+
+  /* ============================================================
+     NAVEGACIÓN
+     ============================================================ */
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let actual = 0;
+  const btnPrev = document.getElementById('prev');
+  const btnNext = document.getElementById('next');
+  const barra = document.getElementById('barra');
+  const contador = document.getElementById('contador');
+
+  function irA(n) {
+    if (n < 0 || n >= total) return;
+    slides[actual].classList.remove('activa');
+    actual = n;
+    slides[actual].classList.add('activa');
+    btnPrev.disabled = actual === 0;
+    btnNext.disabled = actual === total - 1;
+    barra.style.width = ((actual + 1) / total * 100) + '%';
+    contador.textContent = (actual + 1) + ' / ' + total;
+    if (actual !== 3) resetAnimacion();
+  }
+
+  btnNext.addEventListener('click', () => irA(actual + 1));
+  btnPrev.addEventListener('click', () => irA(actual - 1));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') irA(actual + 1);
+    if (e.key === 'ArrowLeft') irA(actual - 1);
+  });
+  barra.style.width = (1 / total * 100) + '%';
+
+  /* ============================================================
+     ANIMACIÓN "CÓMO SE JUEGA"
+     ============================================================ */
+  const escenario = document.getElementById('escenario');
+  const etiqueta = document.getElementById('etiquetaEstado');
+  const j1 = document.getElementById('j1');
+  const j2 = document.getElementById('j2');
+  const j3 = document.getElementById('j3');
+  const j4 = document.getElementById('j4');
+  const manoJ1 = document.getElementById('manoJ1');
+  const manoJ2 = document.getElementById('manoJ2');
+  const manoJ3 = document.getElementById('manoJ3');
+  const manoJ4 = document.getElementById('manoJ4');
+  const cartaJugada = document.getElementById('cartaJugada');
+  const pila1 = document.getElementById('cartaPila1');
+  const pila2 = document.getElementById('cartaPila2');
+  const pila3 = document.getElementById('cartaPila3');
+  const bocadillo1 = document.getElementById('bocadillo1');
+  const bocadillo2 = document.getElementById('bocadillo2');
+  const bocadillo3 = document.getElementById('bocadillo3');
+  const fichaAnimada1 = document.getElementById('fichaAnimada1');
+
+  const pasos = {
+    1: document.getElementById('paso1'),
+    2: document.getElementById('paso2'),
+    3: document.getElementById('paso3'),
+    4: document.getElementById('paso4'),
+    5: document.getElementById('paso5'),
+    6: document.getElementById('paso6'),
+  };
+  const reset = document.getElementById('reset');
+
+  function posicionJugador(id) {
+    const el = document.getElementById(id);
+    const rectE = escenario.getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
+    return {
+      x: rect.left - rectE.left + rect.width / 2,
+      y: rect.top - rectE.top + rect.height / 2,
+    };
+  }
+
+  function mostrarEtiqueta(texto) {
+    etiqueta.textContent = texto;
+    etiqueta.classList.add('visible');
+  }
+
+  function posicionarBocadillo(bocadillo, x, y) {
+    bocadillo.style.left = (x - 70) + 'px';
+    bocadillo.style.top = (y - 90) + 'px';
+  }
+
+  function quitarCartaDeMano(mano, animal) {
+    const carta = mano.querySelector(`.carta-mano[data-animal="${animal}"]`);
+    if (carta) {
+      carta.style.opacity = '0';
+      carta.style.transform = 'translateX(-50%) translateY(-60px) scale(0.5)';
+    }
+  }
+
+  async function jugarCarta(mano, animal, jugadorId, pila) {
+    const cartaEnMano = mano.querySelector(`.carta-mano[data-animal="${animal}"]`);
+    if (!cartaEnMano) return;
+
+    const rectE = escenario.getBoundingClientRect();
+    const rectCarta = cartaEnMano.getBoundingClientRect();
+
+    const xInicial = rectCarta.left - rectE.left + rectCarta.width / 2;
+    const yInicial = rectCarta.top - rectE.top + rectCarta.height / 2;
+
+    cartaJugada.style.transition = 'none';
+    cartaJugada.style.left = (xInicial - 20) + 'px';
+    cartaJugada.style.top = (yInicial - 29) + 'px';
+    cartaJugada.style.opacity = '0';
+    cartaJugada.style.transform = 'rotate(0deg) scale(0.8)';
+
+    if (imagenesDisponibles[animal]) {
+      cartaJugada.style.background = `#fff url(${MAPA_ANIMALES[animal].archivo}) center/cover`;
+      cartaJugada.textContent = '';
+    } else {
+      cartaJugada.style.background = '#fff';
+      cartaJugada.textContent = MAPA_ANIMALES[animal].emoji;
+    }
+
+    quitarCartaDeMano(mano, animal);
+
+    requestAnimationFrame(() => {
+      cartaJugada.style.transition = 'all 1s cubic-bezier(.34,1.56,.64,1)';
+      cartaJugada.style.opacity = '1';
+      cartaJugada.style.transform = 'rotate(0deg) scale(1)';
+
+      requestAnimationFrame(() => {
+        const centroX = rectE.width / 2 - 20;
+        const centroY = rectE.height / 2 - 29;
+        cartaJugada.style.left = centroX + 'px';
+        cartaJugada.style.top = centroY + 'px';
+        cartaJugada.style.transform = 'rotate(-6deg) scale(1.1)';
+      });
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    cartaJugada.style.opacity = '0';
+    if (imagenesDisponibles[animal]) {
+      pila.style.background = `#fff url(${MAPA_ANIMALES[animal].archivo}) center/cover`;
+      pila.textContent = '';
+    } else {
+      pila.style.background = '#fff';
+      pila.textContent = MAPA_ANIMALES[animal].emoji;
+    }
+    pila.classList.add('visible');
+  }
+
+  pasos[1].addEventListener('click', () => {
+    mostrarEtiqueta('Paso 1: acusación');
+    j1.classList.add('destacado');
+    const pos = posicionJugador('j1');
+    posicionarBocadillo(bocadillo1, pos.x, pos.y);
+    bocadillo1.classList.add('visible');
+    pasos[1].disabled = true;
+    pasos[2].disabled = false;
+  });
+
+  pasos[2].addEventListener('click', async () => {
+    mostrarEtiqueta('Paso 2: J2 responde rápido');
+    bocadillo1.classList.remove('visible');
+    j1.classList.remove('destacado');
+    j2.classList.add('destacado');
+    await jugarCarta(manoJ2, 'gato', 'j2', pila1);
+    pasos[2].disabled = true;
+    pasos[3].disabled = false;
+  });
+
+  pasos[3].addEventListener('click', () => {
+    mostrarEtiqueta('Paso 3: J2 acusa a otro animal');
+    const pos = posicionJugador('j2');
+    posicionarBocadillo(bocadillo2, pos.x, pos.y);
+    bocadillo2.classList.add('visible');
+    pasos[3].disabled = true;
+    pasos[4].disabled = false;
+  });
+
+  pasos[4].addEventListener('click', async () => {
+    mostrarEtiqueta('Paso 4: J3 responde rápido');
+    bocadillo2.classList.remove('visible');
+    j2.classList.remove('destacado');
+    j3.classList.add('destacado');
+    await jugarCarta(manoJ3, 'loro', 'j3', pila2);
+    pasos[4].disabled = true;
+    pasos[5].disabled = false;
+  });
+
+  pasos[5].addEventListener('click', () => {
+    mostrarEtiqueta('Paso 5: J3 acusa a la tortuga');
+    const pos = posicionJugador('j3');
+    posicionarBocadillo(bocadillo3, pos.x, pos.y);
+    bocadillo3.classList.add('visible');
+    pasos[5].disabled = true;
+    pasos[6].disabled = false;
+  });
+
+  pasos[6].addEventListener('click', () => {
+    mostrarEtiqueta('Paso 6: ¡Nadie tiene tortuga!');
+    bocadillo3.classList.remove('visible');
+    const pos = posicionJugador('j3');
+    fichaAnimada1.style.left = (pos.x - 18) + 'px';
+    fichaAnimada1.style.top = (pos.y + 20) + 'px';
+    fichaAnimada1.classList.add('visible');
+    j3.classList.remove('destacado');
+    pasos[6].disabled = true;
+  });
+
+  const observer = new MutationObserver(() => {
+    const slideJuego = document.querySelector('[data-slide="3"]');
+    if (slideJuego.classList.contains('activa')) {
+      [manoJ1, manoJ2, manoJ3, manoJ4].forEach(m => m.classList.add('visible'));
+    }
+  });
+  document.querySelectorAll('.slide').forEach(s => {
+    observer.observe(s, { attributes: true, attributeFilter: ['class'] });
+  });
+
+  function resetAnimacion() {
+    etiqueta.classList.remove('visible');
+    [j1, j2, j3, j4].forEach(j => j.classList.remove('destacado'));
+    bocadillo1.classList.remove('visible');
+    bocadillo2.classList.remove('visible');
+    bocadillo3.classList.remove('visible');
+    pila1.classList.remove('visible');
+    pila2.classList.remove('visible');
+    pila3.classList.remove('visible');
+    fichaAnimada1.classList.remove('visible');
+    cartaJugada.style.opacity = '0';
+
+    [manoJ1, manoJ2, manoJ3, manoJ4].forEach(mano => {
+      mano.querySelectorAll('.carta-mano').forEach(c => {
+        c.style.opacity = '';
+        c.style.transform = '';
+      });
+    });
+
+    pasos[1].disabled = false;
+    pasos[2].disabled = true;
+    pasos[3].disabled = true;
+    pasos[4].disabled = true;
+    pasos[5].disabled = true;
+    pasos[6].disabled = true;
+  }
+
+  reset.addEventListener('click', resetAnimacion);
+</script>
+
+</body>
+</html>
